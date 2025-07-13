@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debat App – Simulador Lliga de Debat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #f0f4ff, #d9e6f5);
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #264653;
+    }
+    select, textarea, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      max-width: 600px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    #timer {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 10px;
+    }
+    #output, #botOutput, #evaluation {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎤 Debat App – Simulador Lliga de Debat</h1>
+  <img src="portada.png" alt="Portada" width="300">
+
+  <div class="card">
+    <p><strong>1. Tria la fase del debat:</strong></p>
+    <select id="fase">
+      <option value="180">Introducció (3 minuts)</option>
+      <option value="240">Argumentació (4 minuts)</option>
+      <option value="180">Refutació (3 minuts)</option>
+      <option value="180">Conclusions (3 minuts)</option>
+    </select>
+    <button onclick="startTimer()">Iniciar temps</button>
+    <div id="timer">--:--</div>
+  </div>
+
+  <div class="card">
+    <p><strong>2. Genera un tema de debat:</strong></p>
+    <button onclick="generateDebate()">🎲 Generar tema</button>
+    <div id="output"></div>
+  </div>
+
+  <div class="card">
+    <p><strong>3. Escriu o grava la teua intervenció:</strong></p>
+    <textarea id="textInput" rows="4" cols="50" placeholder="Escriu ací..."></textarea><br>
+    <button onclick="startRecording()">🎙️ Gravar veu</button>
+    <button onclick="stopRecording()">⏹️ Atura gravació</button>
+    <p id="recordingStatus"></p>
+  </div>
+
+  <div class="card">
+    <p><strong>4. Simula una resposta del contrincant (IA):</strong></p>
+    <button onclick="respondBot()">🤖 Resposta de la màquina</button>
+    <div id="botOutput"></div>
+  </div>
+
+  <div class="card">
+    <p><strong>5. Avalua la teua intervenció:</strong></p>
+    <button onclick="evaluateText()">📊 Avaluar argument</button>
+    <p id="evaluation"></p>
+  </div>
+
+  <footer style="margin-top: 40px; font-size: 14px;">
+    <p><strong>Autoria:</strong> Sandra Fortanet Beltran | Llicència: Creative Commons BY-NC-SA 4.0</p>
+  </footer>
+
+  <script>
+    const temes = [
+      "Estem davant d'una societat més masclista?",
+      "S'hauria d'eliminar el cotxe privat de les ciutats?",
+      "La intel·ligència artificial millorarà o empitjorarà l'educació?",
+      "Hauríem de reduir l'horari escolar?",
+      "S'haurien de prohibir les xarxes socials abans dels 16 anys?"
+    ];
+
+    function generateDebate() {
+      const tema = temes[Math.floor(Math.random() * temes.length)];
+      document.getElementById("output").innerText = `Tema de debat: ${tema}`;
+    }
+
+    function startTimer() {
+      const temps = parseInt(document.getElementById("fase").value);
+      let timeLeft = temps;
+      const timerDisplay = document.getElementById("timer");
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        const min = Math.floor(timeLeft / 60);
+        const sec = timeLeft % 60;
+        timerDisplay.innerText = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+        if (timeLeft <= 0) clearInterval(timerInterval);
+        timeLeft--;
+      }, 1000);
+    }
+
+    function evaluateText() {
+      const txt = document.getElementById("textInput").value;
+      let res = "";
+      if (txt.length < 30) res = "Argument massa breu. Desenvolupa'l millor.";
+      else if (txt.includes("perquè")) res = "Bon ús de justificació. Intenta afegir dades o exemples.";
+      else res = "Text rebut. Recorda millorar l'estructura i l'impacte.";
+      document.getElementById("evaluation").innerText = res;
+    }
+
+    function respondBot() {
+      const responses = [
+        "Respecte a la teua argumentació, considere que no s'ha tingut en compte l'impacte social d'aquesta mesura.",
+        "Podríem afirmar que el teu punt de vista és parcial i caldria considerar altres dades objectives.",
+        "La proposta que defenses pot tenir conseqüències negatives a llarg termini."
+      ];
+      const reply = responses[Math.floor(Math.random() * responses.length)];
+      document.getElementById("botOutput").innerText = reply;
+    }
+
+    let recognition;
+    function startRecording() {
+      if (!('webkitSpeechRecognition' in window)) {
+        alert("Aquest navegador no suporta reconeixement de veu.");
+        return;
+      }
+      recognition = new webkitSpeechRecognition();
+      recognition.lang = "ca-ES";
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.onstart = () => document.getElementById("recordingStatus").innerText = "🎤 Gravant...";
+      recognition.onresult = (event) => {
+        document.getElementById("textInput").value = event.results[0][0].transcript;
+        document.getElementById("recordingStatus").innerText = "✅ Gravació finalitzada.";
+      };
+      recognition.onerror = () => document.getElementById("recordingStatus").innerText = "⚠️ Error.";
+      recognition.start();
+    }
+    function stopRecording() {
+      if (recognition) recognition.stop();
+      document.getElementById("recordingStatus").innerText = "⏹️ Gravació aturada.";
+    }
+
+    let timerInterval;
+  </script>
+</body>
+</html>
