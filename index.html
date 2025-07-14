@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Lliga de Debat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f4ff;
+            padding: 20px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #21867a;
+        }
+        #tema {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #264653;
+        }
+    </style>
+</head>
+<body>
+    <h1>Simulador Lliga de Debat</h1>
+    <button onclick="mostrarTema()">🎲 Generar Tema</button>
+    <div id="tema">Esperant tema...</div>
+
+    <script>
+        const temes = [
+            "Estem davant d'una societat més masclista?",
+            "S'hauria d'eliminar el cotxe privat de les ciutats?",
+            "La intel·ligència artificial millorarà o empitjorarà l'educació?",
+            "Hauríem de reduir l'horari escolar?",
+            "S'haurien de prohibir les xarxes socials abans dels 16 anys?"
+        ];
+
+        function mostrarTema() {
+            const tema = temes[Math.floor(Math.random() * temes.length)];
+            document.getElementById("tema").innerText = tema;
+        }
+    </script>
+</body>
+</html>
