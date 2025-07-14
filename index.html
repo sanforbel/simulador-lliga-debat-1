@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <title>Lliga de Debat - Simulador</title>
+</head>
+<body>
+  <h1>Lliga de Debat - Simulador</h1>
+  <button onclick="mostrarTema()">🎲 Generar Tema de Debat</button>
+  <div id="tema"></div>
+
+  <script>
+    const temes = [
+      "Estem davant d'una societat més masclista?",
+      "S'hauria d'eliminar el cotxe privat de les ciutats?",
+      "La intel·ligència artificial millorarà o empitjorarà l'educació?",
+      "Hauríem de reduir l'horari escolar?",
+      "S'haurien de prohibir les xarxes socials abans dels 16 anys?"
+    ];
+    function mostrarTema() {
+      const tema = temes[Math.floor(Math.random() * temes.length)];
+      document.getElementById("tema").innerText = tema;
+    }
+  </script>
+</body>
+</html>
